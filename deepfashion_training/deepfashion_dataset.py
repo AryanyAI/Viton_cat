@@ -42,8 +42,8 @@ class DeepFashionDataset(Dataset):
         
         # Load dataset from HuggingFace
         try:
-            split_name = "train" if phase == "train" else "validation"
-            self.dataset = load_dataset("SaffalPoosh/deepFashion-with-masks", split=split_name)
+            # The DeepFashion dataset only has a 'train' split, so we use it for both train and validation
+            self.dataset = load_dataset("SaffalPoosh/deepFashion-with-masks", split="train")
 
             # Limit samples for testing
             if max_samples:

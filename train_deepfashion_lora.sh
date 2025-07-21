@@ -12,7 +12,7 @@
 # --- Configuration ---
 # Set default parameters for a full training run.
 # These can be overridden by command-line flags.
-ACCELERATE_CONFIG_FILE="accelerate_config.yaml"
+ACCELERATE_CONFIG_FILE="accelerate_config_fixed.yaml"  # Use fixed config to avoid GLIBCXX issues
 TRAIN_SCRIPT="deepfashion_training/train_deepfashion_lora.py"
 OUTPUT_DIR_BASE="/home/sheldon/cvton/catvton-flux/runs"
 
@@ -37,11 +37,13 @@ while [[ "$#" -gt 0 ]]; do
             MAX_TRAIN_SAMPLES=100 # Use a small subset of data for a fast run
             VALIDATION_STEPS=25
             CHECKPOINTING_STEPS=50
+            ACCELERATE_CONFIG_FILE="accelerate_config_no_deepspeed.yaml"  # Use non-DeepSpeed config to avoid GLIBCXX issues
             shift
             ;;
         --h100)
             echo "🚀 RUN MODE: H100 Optimized"
             RUN_TYPE="h100_full"
+            ACCELERATE_CONFIG_FILE="accelerate_config_h100.yaml"  # Use H100-optimized config
             MIXED_PRECISION="bf16"
             # H100s can handle larger batch sizes, which can speed up training.
             TRAIN_BATCH_SIZE=2
@@ -70,6 +72,11 @@ mkdir -p "$OUTPUT_DIR"
 
 # --- Build Accelerate Command ---
 # Assemble the final command to be executed.
+
+# Set environment variables to avoid DeepSpeed CPU Adam issues
+export DS_BUILD_OPS=0
+export DS_SKIP_CUDA_CHECK=1
+
 CMD="accelerate launch --config_file \"$ACCELERATE_CONFIG_FILE\" \"$TRAIN_SCRIPT\" \
     --output_dir=\"$OUTPUT_DIR\" \
     --max_train_steps=\"$MAX_TRAIN_STEPS\" \

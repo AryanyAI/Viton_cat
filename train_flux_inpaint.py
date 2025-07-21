@@ -142,7 +142,7 @@ Please adhere to the licensing terms as described [here](https://huggingface.co/
     model_card.save(os.path.join(repo_folder, "README.md"))
 
 
-def load_text_encoders(class_one, class_two):
+def load_text_encoders(class_one, class_two, args):
     text_encoder_one = class_one.from_pretrained(
         args.pretrained_model_name_or_path, subfolder="text_encoder", revision=args.revision, variant=args.variant
     )
@@ -479,7 +479,7 @@ def main(args):
         args.pretrained_model_name_or_path, subfolder="scheduler"
     )
     noise_scheduler_copy = copy.deepcopy(noise_scheduler)
-    text_encoder_one, text_encoder_two = load_text_encoders(text_encoder_cls_one, text_encoder_cls_two)
+    text_encoder_one, text_encoder_two = load_text_encoders(text_encoder_cls_one, text_encoder_cls_two, args)
     vae = AutoencoderKL.from_pretrained(
         args.pretrained_model_name_or_path,
         subfolder="vae",

@@ -74,7 +74,7 @@ def create_training_args():
     parser.add_argument('--guidance_scale', type=float, default=3.5)
     parser.add_argument('--dropout_prob', type=float, default=0.0)
 
-    # Optimizer
+    # Optimizer - Force PyTorch AdamW to avoid DeepSpeed CPU Adam GLIBCXX issues
     parser.add_argument('--optimizer', type=str, default="adamw")
     parser.add_argument('--use_8bit_adam', action='store_true', default=False)
     parser.add_argument('--adam_beta1', type=float, default=0.9)
@@ -82,6 +82,10 @@ def create_training_args():
     parser.add_argument('--adam_weight_decay', type=float, default=1e-2)
     parser.add_argument('--adam_epsilon', type=float, default=1e-8)
     parser.add_argument('--scale_lr', action='store_true', default=False)
+    
+    # Force disable DeepSpeed CPU optimizations to avoid GLIBCXX issues
+    parser.add_argument('--cpu_offload', action='store_true', default=False)
+    parser.add_argument('--deepspeed_plugin', type=str, default=None)
 
     # Misc
     parser.add_argument('--seed', type=int, default=42)
