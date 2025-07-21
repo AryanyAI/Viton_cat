@@ -41,6 +41,16 @@ def parse_args(input_args=None):
         default=None,
         help="The config of the Dataset, leave as None if there's only one config.",
     )
+
+    # Making manual changes in parser_helper.py for lora training
+    parser.add_argument(
+        "--dataset_type",
+        type=str,
+        default="vitonhd",
+        choices=["vitonhd", "deepfashion"],
+        help="Type of dataset to use: vitonhd or deepfashion",
+    )
+
     parser.add_argument(
         "--instance_data_dir",
         type=str,
